@@ -105,12 +105,15 @@ for idx in selected_truth_indices:
     item = truthfulqa[idx]
     targets = item["mc1_targets"]
 
-    choices = targets["choices"]
-    labels = targets["labels"]
+    # Shuffle choices together with correctness labels
+    # to prevent the correct answer from always appearing as A
+    paired_choices = list(zip(targets["choices"], targets["labels"]))
 
-    # Find the original correct answer position
+    truth_rng.shuffle(paired_choices)
+
+    choices, labels = zip(*paired_choices)
     correct_index = labels.index(1)
-
+    
     truth_records.append({
         "question_id": f"truthfulqa_{idx}",
         "source": "TruthfulQA",

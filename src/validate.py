@@ -68,6 +68,23 @@ def validate_dataset():
     print("\nQuestions by source:")
     print(source_counts)
 
+    # Check correct-answer distribution by dataset source
+    answer_distribution = pd.crosstab(
+        df["source"],
+        df["correct_answer"]
+    ).reindex(columns=list("ABCD"), fill_value=0)
+
+    print("\nCorrect-answer distribution by source:")
+    print(answer_distribution)
+
+    # Flag extreme answer-position concentration
+    for source, counts in answer_distribution.iterrows():
+        if counts.max() == counts.sum():
+            print(
+                f"WARNING: All {source} correct answers "
+                "are in the same position!"
+            )
+
     # 5. Check subject coverage
     print("\nUnique subjects by source:")
     print(df.groupby("source")["subject"].nunique())
