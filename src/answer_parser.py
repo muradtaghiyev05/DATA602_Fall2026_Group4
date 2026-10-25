@@ -29,7 +29,8 @@ _FINAL_ANSWER = re.compile(
     r"(?![A-Za-z])"
 )
 
-_BOXED = re.compile(r"\\boxed\{\s*([A-D])\s*\}")
+# "\boxed{D}", and Gemini's "\boxed{\text{D}}" seen in the v2 pilot
+_BOXED = re.compile(r"\\boxed\{\s*(?:\\(?:text|textbf|mathrm)\{\s*)?([A-D])\s*\}")
 
 # Prose fallbacks. The match that ends latest in the reply wins,
 # since models often revise.
@@ -59,6 +60,10 @@ _PROSE = [
 ]
 
 _JUST_A_LETTER = re.compile(r"(?:\*\*|__)?\(?([A-D])\)?(?:\*\*|__)?\.?")
+
+# A one-line reply that restates the chosen option, like
+# "A. Antiperspirants may irritate sensitive skin." (v2 pilot)
+_LETTER_THEN_OPTION = re.compile(r"(?:\*\*)?\(?([A-D])[.)]\s+[^\n]+")
 
 # "I can't answer" / "I cannot determine", including the swapped forms.
 _REFUSAL = re.compile(
@@ -102,6 +107,10 @@ def extract_answer(text):
     if just:
         return just.group(1)
 
+    option = _LETTER_THEN_OPTION.fullmatch(stripped)
+    if option:
+        return option.group(1)
+
     if _REFUSAL.search(text):
         return "REFUSED"
 
@@ -116,6 +125,9 @@ if __name__ == "__main__":
         ("Final answer: (C)", "C"),
         ("I first said A.\n\nFinal answer: B\n\nFinal answer: D", "D"),
         ("The final answer is $\\boxed{D}$", "D"),
+        ("The final answer is $\\boxed{\\text{A}}$.", "A"),
+        ("A. Antiperspirants may irritate sensitive skin.", "A"),
+        ("A. First point.\nB. Second point.", "UNPARSEABLE"),
         ("Yes, C is the correct choice.", "C"),
         ("No, the correct choice is C.", "C"),
         ("The answer is D.", "D"),
