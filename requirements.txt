@@ -4,3 +4,5 @@ datasets
 pandas
 pyarrow
 scikit-learn
+matplotlib
+jupyter
