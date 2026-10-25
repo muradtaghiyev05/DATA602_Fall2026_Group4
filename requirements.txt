@@ -3,3 +3,4 @@ python-dotenv
 datasets
 pandas
 pyarrow
+scikit-learn
