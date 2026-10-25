@@ -101,4 +101,4 @@ We reviewed all AI-assisted code and text, and tested it:
 
 The design, the choice of models and questions, and the interpretation of results are our own.
 
-The parser audit labels in `data/metadata/audit_labels_1.csv` and `audit_labels_2.csv` were made by: _\<labeler 1\>_ and _\<labeler 2\>_.
+The parser audit labels in `data/metadata/audit_labels_1.csv` and `audit_labels_2.csv` were made by: _Narmin_ and _Maheer_.
